@@ -21,10 +21,10 @@ app.use(express.static('public'));
 let db;
 function handleDisconnect() {
     db = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',  // Ajusta según tu configuración
-        database: 'cap3d'
+        host: 'bmwwo4er4uuobzkpu4je-mysql.services.clever-cloud.com',
+        user: 'ufsmclsjqpty0qxl',
+        password: '921iPxSWMcmXCQdBww2c',  // Ajusta según tu configuración
+        database: 'bmwwo4er4uuobzkpu4je'
     });
 
     db.connect((err) => {
