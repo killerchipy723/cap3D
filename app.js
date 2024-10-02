@@ -11,7 +11,7 @@ const pdfmake = require('pdfmake/build/pdfmake');
 const vfsFonts = require('pdfmake/build/vfs_fonts');
 pdfmake.vfs = vfsFonts.pdfMake.vfs; // Cargar fuentes
 
-const port = 8080;
+const port = 3000;
 
 // Configurar middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,10 +21,10 @@ app.use(express.static('public'));
 let db;
 function handleDisconnect() {
     db = mysql.createConnection({
-        host: 'bmwwo4er4uuobzkpu4je-mysql.services.clever-cloud.com',
-        user: 'ufsmclsjqpty0qxl',
-        password: '921iPxSWMcmXCQdBww2c',  // Ajusta según tu configuración
-        database: 'bmwwo4er4uuobzkpu4je'
+        host: 'localhost',
+        user: 'root',
+        password: '',  // Ajusta según tu configuración
+        database: 'cap3d'
     });
 
     db.connect((err) => {
