@@ -60,6 +60,7 @@ app.get('/register-page', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/register.html'));
 });
 
+
 // Ruta para servir la página de asistencia
 app.get('/attendance-page', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/asistencia.html'));
@@ -113,7 +114,6 @@ app.post('/register', (req, res) => {
         });
     });
 });
-
 
 app.post('/registrar-asistencia', (req, res) => {
     const { idestudiante } = req.body;
