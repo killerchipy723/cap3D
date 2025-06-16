@@ -62,7 +62,8 @@
                 if (data.success) {
                     document.getElementById('nombreAlumno').textContent = `Nombre: ${data.alumno.apenomb}`;
                     document.getElementById('alumnoInfo').style.display = 'block';
-                    document.getElementById('darPresenteBtn').dataset.idalumno = data.alumno.idalumno;
+                    document.getElementById('darPresenteBtn').dataset.idestudiante = data.alumno.idestudiante;
+
                     alertMessage.style.display = 'none';
                 } else {
                     alertMessage.className = 'alert alert-warning';
@@ -75,12 +76,12 @@
 
         // Evento para registrar asistencia
         document.getElementById('darPresenteBtn').addEventListener('click', function () {
-            const idalumno = this.dataset.idalumno;
+            const idestudiante = this.dataset.idestudiante;
 
             fetch('/registrar-asistencia', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ idalumno })
+                body: new URLSearchParams({ idestudiante })
                 
             })
             .then(response => response.json())

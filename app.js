@@ -21,10 +21,10 @@ app.use(express.static('public'));
 let db;
 function handleDisconnect() {
     db = mysql.createConnection({
-        host: 'bmwwo4er4uuobzkpu4je-mysql.services.clever-cloud.com',
-        user: 'ufsmclsjqpty0qxl',
-        password: '921iPxSWMcmXCQdBww2c',  // Ajusta según tu configuración
-        database: 'bmwwo4er4uuobzkpu4je'
+        host: '200.58.106.156',
+        user: 'c2710325_killer',
+        password: 'SistemaIES6021',  // Ajusta según tu configuración
+        database: 'c2710325_sistema'
     });
 
     db.connect((err) => {
@@ -70,7 +70,7 @@ app.get('/attendance-page', (req, res) => {
 // Ruta para buscar alumno por DNI
 app.post('/buscar-alumno', (req, res) => {
     const { dni } = req.body;
-    const query = 'SELECT * FROM alumno WHERE dni = ?';
+    const query = 'SELECT * FROM estudiante WHERE dni = ?';
 
     db.query(query, [dni], (err, result) => {
         if (err) {
@@ -87,7 +87,7 @@ app.post('/register', (req, res) => {
     const { apenomb, dni, carrera, anio } = req.body;
 
     // Verificar si el alumno ya está registrado por DNI
-    const checkQuery = `SELECT * FROM alumno WHERE dni = ?`;
+    const checkQuery = `SELECT * FROM estudiante WHERE dni = ?`;
     db.query(checkQuery, [dni], (err, result) => {
         if (err) {
             console.log('Error al verificar alumno:', err);
@@ -100,7 +100,7 @@ app.post('/register', (req, res) => {
         }
 
         // Si el alumno no existe, proceder con el registro
-        const query = `INSERT INTO alumno (apenomb, dni, carrera, año, fecha) VALUES (?, ?, ?, ?, ?)`;
+        const query = `INSERT INTO estudiante (apenomb, dni, carrera, año, fecha) VALUES (?, ?, ?, ?, ?)`;
         const fecha = new Date();
 
         db.query(query, [apenomb, dni, carrera, anio, fecha], (err, result) => {
@@ -116,13 +116,13 @@ app.post('/register', (req, res) => {
 
 
 app.post('/registrar-asistencia', (req, res) => {
-    const { idalumno } = req.body;
+    const { idestudiante } = req.body;
     const fecha = new Date();
     const fechaFormatted = fecha.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
 
     // Verificar si ya hay un registro de asistencia para el alumno en la fecha actual
-    const checkQuery = `SELECT * FROM asistencia WHERE idalumno = ? AND DATE(fecha) = ?`;
-    db.query(checkQuery, [idalumno, fechaFormatted], (err, result) => {
+    const checkQuery = `SELECT * FROM asistenciass WHERE idestudiante = ? AND DATE(fecha) = ?`;
+    db.query(checkQuery, [idestudiante, fechaFormatted], (err, result) => {
         if (err) {
             return res.json({ success: false, message: 'Error al verificar asistencia.' });
         }
@@ -133,8 +133,8 @@ app.post('/registrar-asistencia', (req, res) => {
         }
 
         // Registrar asistencia si no hay registro previo hoy
-        const insertQuery = `INSERT INTO asistencia (idalumno, fecha, estado) VALUES (?, ?, ?)`;
-        db.query(insertQuery, [idalumno, fecha, 'Presente'], (err, result) => {
+        const insertQuery = `INSERT INTO asistenciass (idestudiante, fecha, estado) VALUES (?, ?, ?)`;
+        db.query(insertQuery, [idestudiante, fecha, 'Presente'], (err, result) => {
             if (err) {
                 return res.json({ success: false, message: 'Error al registrar asistencia.' });
             } else {
@@ -148,8 +148,8 @@ app.post('/consultar-asistencia', (req, res) => {
     const { dni } = req.body;
     const query = `
         SELECT a.idasistencia, al.apenomb, a.fecha, a.estado 
-        FROM asistencia a
-        JOIN alumno al ON a.idalumno = al.idalumno
+        FROM asistenciass a
+        JOIN estudiante al ON a.idestudiante = al.idestudiante
         WHERE al.dni = ?
     `;
 
@@ -172,8 +172,8 @@ app.get('/asistencia', (req, res) => {
         return res.status(400).json({ error: 'Debe proporcionar una fecha' });
     }
     const sql = `SELECT a.idasistencia, al.apenomb, al.dni,al.carrera,a.fecha, a.estado 
-                 FROM asistencia a 
-                 JOIN alumno al ON a.idalumno = al.idalumno 
+                 FROM asistenciass a 
+                 JOIN estudiante al ON a.idestudiante = al.idestudiante 
                  WHERE a.fecha = ?`;
 
     db.query(sql, [fecha], (error, results) => {
@@ -203,8 +203,8 @@ app.get('/asistencia/pdf', (req, res) => {
     // Consulta actualizada para obtener los datos de asistencia
     const query = `
         SELECT a.idasistencia, al.apenomb, al.dni, al.carrera, a.fecha, a.estado 
-        FROM asistencia a 
-        JOIN alumno al ON a.idalumno = al.idalumno 
+        FROM asistenciass a 
+        JOIN estudiante al ON a.idestudiante = al.idestudiante 
         WHERE a.fecha = ?
     `;
 
@@ -218,7 +218,7 @@ app.get('/asistencia/pdf', (req, res) => {
         const docDefinition = {
             content: [
                 {
-                    text: 'Registro de Asistencias\nCapacitación de Impresión 3D\nI.E.S 6.021 Juan Carlos Dávalos',
+                    text: 'Registro de Asistencias\nSIMPOSIO - PROBLEMÁTICA DE LA EDUCACIÓN\nI.E.S 6.021 Juan Carlos Dávalos',
                     style: 'header',
                     alignment: 'center'
                 },
