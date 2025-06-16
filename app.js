@@ -117,32 +117,32 @@ app.post('/register', (req, res) => {
 
 app.post('/registrar-asistencia', (req, res) => {
     const { idestudiante } = req.body;
-    const fecha = new Date();
-    const fechaFormatted = fecha.toISOString().split('T')[0]; // Obtener solo la parte de la fecha (YYYY-MM-DD)
 
-    // Verificar si ya hay un registro de asistencia para el alumno en la fecha actual
-    const checkQuery = `SELECT * FROM asistenciass WHERE idestudiante = ? AND DATE(fecha) = ?`;
+    // Ajustar a hora local (Argentina, UTC-3)
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const fechaLocal = new Date(now.getTime() - offset);
+    const fechaFormatted = fechaLocal.toISOString().split('T')[0];
+
+    console.log(`Verificando asistencia de: ${idestudiante} para el día: ${fechaFormatted}`);
+
+    const checkQuery = `SELECT * FROM asistenciass WHERE idestudiante = ? AND fecha = ?`;
     db.query(checkQuery, [idestudiante, fechaFormatted], (err, result) => {
-        if (err) {
-            return res.json({ success: false, message: 'Error al verificar asistencia.' });
-        }
+        if (err) return res.json({ success: false, message: 'Error al verificar asistencia.' });
 
         if (result.length > 0) {
-            // Si ya existe un registro de asistencia para hoy
             return res.json({ success: false, message: 'El alumno ya registró asistencia hoy.' });
         }
 
-        // Registrar asistencia si no hay registro previo hoy
         const insertQuery = `INSERT INTO asistenciass (idestudiante, fecha, estado) VALUES (?, ?, ?)`;
-        db.query(insertQuery, [idestudiante, fecha, 'Presente'], (err, result) => {
-            if (err) {
-                return res.json({ success: false, message: 'Error al registrar asistencia.' });
-            } else {
-                return res.json({ success: true, message: 'Asistencia registrada con éxito.' });
-            }
+        db.query(insertQuery, [idestudiante, fechaFormatted, 'Presente'], (err, result) => {
+            if (err) return res.json({ success: false, message: 'Error al registrar asistencia.' });
+            return res.json({ success: true, message: 'Asistencia registrada con éxito.' });
         });
     });
 });
+
+
 // Ruta para consultar asistencia
 app.post('/consultar-asistencia', (req, res) => {
     const { dni } = req.body;
